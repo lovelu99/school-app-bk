@@ -8,9 +8,9 @@ COPY . .
 
 RUN go build -o app .
 
-FROM golang:1.23-alpine
+FROM alpine:3.20
 WORKDIR /app
 COPY --from=builder app/app .
 
 EXPOSE 5001
-CMD [./app]
+CMD ["./app"]
