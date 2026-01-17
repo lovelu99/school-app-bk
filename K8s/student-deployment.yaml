@@ -1,0 +1,46 @@
+kind: Service
+metadata:
+  name: students-service
+spec:
+  type: ClusterIP
+  selector:
+    app: student-backend
+  ports:
+    - port: 5001
+      targetPort: 5001
+      protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: student-backend
+  template:
+    metadata:
+      labels:
+        app: student-backend
+    spec:
+      containers:
+        - name: student-backend
+          image: noakhali/school-app-studentservice
+          ports:
+            - containerPort: 5001
+          env:
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: school-db-secret
+                  key: MONGODB_URI
+
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: school-db-config
+                  key: DATABASE_NAME
+
+
